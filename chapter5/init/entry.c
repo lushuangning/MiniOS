@@ -1,4 +1,4 @@
-#include "console.h"
+#include "../include/console.h"
 
 int kern_entry()
 {

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../include/common.h"
 
 // 此处用到内联汇编，详情参考下面的博客
 // https://www.cnblogs.com/taek/archive/2012/02/05/2338838.html

@@ -1,6 +1,6 @@
-#include "console.h"
-#include "string.h"
-#include "vargs.h"
+#include "../../include/console.h"
+#include "../../include/string.h"
+#include "../../include/vargs.h"
 
 // flags(type) 的宏定义，flags 在 vsprintf() 函数中默认为 0
 // 在进行位运算时很方便
@@ -55,7 +55,7 @@ void printk_color(real_color_t back, real_color_t fore, const char *format, ...)
 static int skip_atoi(const char **s) {
   int i = 0;
 
-  while (is_digit(**s)){
+  while (is_digit(**s)) {
     i = i * 10 + *((*s)++) - '0';
   }
 
@@ -83,65 +83,65 @@ static char *number(char *str, int num, int base, int size, int precision,
     type &= -ZEROPAD;
   }
 
-  if (base < 2 || base > 36){
+  if (base < 2 || base > 36) {
     return 0;
   }
 
   c = (type & ZEROPAD) ? '0' : ' ';
 
-  if (type & SIGN && num < 0){
+  if (type & SIGN && num < 0) {
     sign = '-';
     num = -num;
   }else {
     sign = (type & PLUS) ? '+' : ((type & SPACE) ? ' ' : 0);
   }
 
-  if (sign){
+  if (sign) {
     size--;
   }
 
   if (type & SPECIAL) {
-    if (base == 16){
+    if (base == 16) {
       size -= 2;
-    }else if (base == 0){
+    }else if (base == 0) {
       size--;
     }
   }
 
   i = 0;
-  if (num == 0){
+  if(num == 0) {
     tmp[i++] = '0';
-  }else{
+  }else {
     while (num != 0)
       tmp[i++] = digits[do_div(num, base)];
   }
 
-  if (i > precision){
+  if(i > precision) {
     precision = i;
   }
 
   size -= precision;
 
-  if(!(type & (ZEROPAD+LEFT))){
-    while (size-- > 0){
+  if(!(type & (ZEROPAD+LEFT))) {
+    while(size-- > 0) {
       *str++ = ' ';
     }
   }
 
-  if (sign){
+  if(sign) {
     *str++ = sign;
   }
-  if (type & SPECIAL){
-    if (base == 8){
+  if(type & SPECIAL) {
+    if(base == 8) {
       *str++ = '0';
-    }else if (base == 16){
+    }else if(base == 16) {
       // 拼凑成 '0X'
       *str++ = '0';
       *str++ = digits[33];
     }
   }
 
-  if (!(type & LEFT)){
+  if (!(type & LEFT)) {
     while (size-- > 0)
       *str++ = c;
   }
@@ -163,18 +163,15 @@ static int vsprintf(char *buff, const char *format, va_list args) {
   char *str;  // 用于存放转换过程中的字符串
   char *s;
   int *ip;
-
   int flags;  // number() 函数的 type 参数
-
   int field_width;  // 输出字符串宽度
   int precision;  // min. 整数数字个数；max，字符串中字符个数
-
   int qualifier;  // 'h', 'l' 或 'L' 用于整数字段
 
   // 首先将字符指针指向 buf，然后扫描格式字符串，对各个格式转换指示进行相应的处理。
-  for(str = buff; *format; ++format){
+  for(str = buff; *format; ++format) {
     // 格式转换指示字符串均以'%'开始，这里从 format 格式字符串中扫描 '%'；不是格式指示的一般字符均被依次存入 str。
-    if(*format != '%'){
+    if(*format != '%') {
       *str++ = *format;
       continue;
     }
@@ -183,7 +180,7 @@ static int vsprintf(char *buff, const char *format, va_list args) {
     flags = 0;
     repeat:
     ++format;	// this also skips first '%'
-    switch (*format){
+    switch (*format) {
       case '-': flags |= LEFT;
         goto repeat;
       case '+': flags |= PLUS;
@@ -197,10 +194,9 @@ static int vsprintf(char *buff, const char *format, va_list args) {
     }
     
     field_width = -1;
-    if (is_digit(*format)){
+    if (is_digit(*format)) {
       field_width = skip_atoi(&format);
-    }
-    else if (*format == '*'){
+    } else if (*format == '*'){
       // 下一个参数指定宽度
       field_width = va_arg(args, int);
       if (field_width < 0){
@@ -210,98 +206,116 @@ static int vsprintf(char *buff, const char *format, va_list args) {
     }
     
     precision = -1;
-    if (*format == '.'){
+    if (*format == '.') {
       ++format;
       if (is_digit(*format))
         precision = skip_atoi(&format);
-    }else if (*format == '*'){
+    }else if (*format == '*') {
       // 下一个参数指定精度
       precision = va_arg(args, int);
     }
 
-    if (precision < 0){
+    if (precision < 0) {
       precision = 0;
     }
 
     // 分析长度修饰符，并将其存入 qualifer 变量
-
     qualifier = -1;
-    if (*format == 'h' || *format == 'l' || *format == 'L'){
+    if (*format == 'h' || *format == 'l' || *format == 'L') {
       qualifier = *format;
       ++format;
     }
 
     // 分析转换格式指示符
-
-    switch(*format){
+    switch(*format) {
     case 'c':
-      if (!(flags & LEFT)){
+      if (!(flags & LEFT)) {
         while (--field_width > 0)
-    *str++ = ' ';
+          *str++ = ' ';
       }
+
       *str++ = (unsigned char) va_arg(args, int);
+
       while(--field_width > 0)
         *str++ = ' ';
+      
       break;
 
     case 's':
       s = va_arg(args, char *);
       len = strlen(s);
-      if (precision < 0)
+
+      if (precision < 0) {
         precision = len;
-      else if (len > precision)
+      }else if(len > precision) {
         len = precision;
+      }
 
-      if (!(flags & LEFT))
+      if (!(flags & LEFT)) {
         while (len < field_width--)
-    *str++ = ' ';
-
+          *str++ = ' ';
+      }
+      
       for (i = 0; i < len; ++i)
         *str++ = *s++;
 
       while (len < field_width--)
         *str++= ' ';
+      
       break;
 
     case 'o':
       str = number(str, va_arg(args, unsigned long), 8, field_width, precision, flags);
       break;
+
     case 'p':
       if (field_width == -1) {
         field_width = 0;
         flags |= ZEROPAD;
       }
       str = number(str, (unsigned long) va_arg(args, void *), 16, field_width, precision, flags);
+
       break;
+
     case 'x':
       flags |= SMALL;
+
     case 'X':
       str = number(str, va_arg(args, unsigned long), 16, field_width, precision, flags);
+
       break;
 
     case 'd':
+
     case 'i':
       flags |= SIGN;
+
     case 'u':
       str = number(str, va_arg(args, unsigned long), 10, field_width, precision, flags);
+
       break;
 
     case 'b':
       str = number(str, va_arg(args, unsigned long), 2, field_width, precision, flags);
+
       break;
+    
     case 'n':
       ip = va_arg(args, int *);
       *ip = (str - buff);
+
       break;
 
     default:
       if (*format != '%')
         *str++ = '%';
+      
       if (*format) {
         *str++ = *format;
       } else {
         --format;
       }
+
       break;
     }
   } // end for

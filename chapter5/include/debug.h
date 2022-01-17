@@ -1,6 +1,8 @@
+#pragma once
+
 #include "console.h"
 #include "vargs.h"
-//#include "elf.h"
+#include "elf.h"
 
 #define assert(x, info) \
     do{                 \
@@ -13,8 +15,18 @@
 #define static_assert(x)    \
       switch (x) {case 0: case (x): ;}
 
+// 初始化 Debug 信息
+void init_debug();
+
+// 打印当前的函数调用栈信息
+void panic(const char *msg);
+
+// 打印当前的段存储器值
+void print_cur_status();
+
 // 内核的打印函数，...的作用是，让编译器允许在调用printk函数的时候带任意多个实参
 void printk(const char *format, ...);
 
 // 内核的打印函数，带颜色
-void printk_color(real_color back, real_color fore, const char *format, ...);
+void printk_color(real_color_t back, real_color_t fore, const char *format, ...);
+

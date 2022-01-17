@@ -1,5 +1,4 @@
-#ifndef INCLUDE_STRING_H
-#define INCLUDE_STRING_H
+#pragma once
 
 #include "types.h"
 
@@ -26,5 +25,3 @@ char *strcat(char *dest, const char *src);
 
 // 返回字符串的长度
 int strlen(const char *src);
-
-#endif
