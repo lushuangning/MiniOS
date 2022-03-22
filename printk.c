@@ -214,15 +214,15 @@ static int vsprintf(char *buff, const char *format, va_list args) {
     precision = -1;
     if (*format == '.') {
       ++format;
-      if (is_digit(*format)) {
+      if (is_digit(*format))
         precision = skip_atoi(&format);
-      } else if (*format == '*') {
-        // 下一个参数指定精度
-        precision = va_arg(args, int);
-      }
-      if (precision < 0) {
-        precision = 0;
-      }
+    }else if (*format == '*') {
+      // 下一个参数指定精度
+      precision = va_arg(args, int);
+    }
+
+    if (precision < 0) {
+      precision = 0;
     }
 
     // 分析长度修饰符，并将其存入 qualifer 变量
@@ -273,12 +273,10 @@ static int vsprintf(char *buff, const char *format, va_list args) {
       while (len < field_width--) {
         *str++= ' ';
       }
-
       break;
 
     case 'o':
       str = number(str, va_arg(args, unsigned long), 8, field_width, precision, flags);
-
       break;
 
     case 'p':
@@ -287,38 +285,27 @@ static int vsprintf(char *buff, const char *format, va_list args) {
         flags |= ZEROPAD;
       }
       str = number(str, (unsigned long) va_arg(args, void *), 16, field_width, precision, flags);
-
       break;
 
     case 'x':
       flags |= SMALL;
-
     case 'X':
       str = number(str, va_arg(args, unsigned long), 16, field_width, precision, flags);
-
       break;
 
     case 'd':
-
     case 'i':
       flags |= SIGN;
-
     case 'u':
       str = number(str, va_arg(args, unsigned long), 10, field_width, precision, flags);
-
       break;
-
     case 'b':
       str = number(str, va_arg(args, unsigned long), 2, field_width, precision, flags);
-
       break;
-
     case 'n':
       ip = va_arg(args, int *);
       *ip = (str - buff);
-
       break;
-      
     default:
       if (*format != '%') {
         *str++ = '%';
