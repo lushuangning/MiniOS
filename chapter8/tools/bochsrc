@@ -1,0 +1,27 @@
+# 开始 gdb 联合调试
+# gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+
+# ROM 文件
+romimage: file="/usr/local/bochs/share/bochs/BIOS-bochs-latest"
+vgaromimage: file="/usr/local/bochs/share/bochs/VGABIOS-lgpl-latest"
+
+# 软盘
+floppya: type=1_44, 1_44="boot.img", status=inserted, write_protected=0
+# boot: a
+
+# 启动设备为软盘
+boot: floppy
+
+# cpu 配置
+cpu: ips=1000000
+clock: sync=realtime
+
+# 键盘启用 US 键盘映射。在较高版本（我这里用的2.6.11），keyboard_mapping已被keyboard替代
+# keyboard_mapping: enabled=1, map="/usr/local/bochs/share/bochs/keymaps/x11-pc-us.map"
+keyboard: keymap="/usr/local/bochs/share/bochs/keymaps/x11-pc-us.map"
+
+# 鼠标不启用
+mouse: type=ps2, enabled=0, toggle=ctrl+mbutton
+
+# 内存
+megs: 32
